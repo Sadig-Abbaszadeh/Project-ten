@@ -3,43 +3,43 @@ using System.Collections.Generic;
 using UnityEngine;
 using SimetraCustomLib.GeneralUtils;
 
-public class Test : MonoBehaviour
+public class GridManager : MonoBehaviour
 {
     [SerializeField]
     int width, height;
     [SerializeField]
-    float cellSize, lineNumberFontSize;
+    float cellSize;
     [SerializeField]
     Vector2 gridCenter;
     [SerializeField]
-    Sprite[] numberSprites;
+    Sprite[] cellSprites;
     [SerializeField]
-    GameObject cellExample;
+    GameObject cellPrefab;
 
     GenericGrid<Cell> grid;
+
+    public int Width => width;
+    public int Height => height;
+    public float CellSize => cellSize;
 
     private void Start()
     {
         grid = new GenericGrid<Cell>(width, height, cellSize, gridCenter, GridPivot.Center, false, (int x, int y) => new Cell());
 
         Transform gridParent = (new GameObject("Grid")).transform;
-        Transform lineValueParent = (new GameObject("Line Values")).transform;
 
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                Transform cellWorldObject = Instantiate(cellExample).transform;
+                Transform cellWorldObject = Instantiate(cellPrefab).transform;
                 cellWorldObject.position = grid.GridToWorldPosition(x, y);
                 cellWorldObject.SetParent(gridParent);
 
                 grid.GetCellObjectImmediate(x, y).SetSpriteRenderer(cellWorldObject.GetComponent<SpriteRenderer>());
             }
         }
-
-        for (int x = 0; x < width; x++)
-            WorldObjects.CreateWorldText("0", lineValueParent, grid.GridToWorldPosition(x, height - 1) + Vector3.up * cellSize, lineNumberFontSize, Color.white, TMPro.TextAlignmentOptions.Center);
-        for(int y = 0; y < height; y++)
-            WorldObjects.CreateWorldText("0", lineValueParent, grid.GridToWorldPosition(0, y) - Vector3.right * cellSize, lineNumberFontSize, Color.white, TMPro.TextAlignmentOptions.Center);
     }
+
+    public Vector3 GetCellPosition(int x, int y) => grid.GridToWorldPosition(x, y);
 }
