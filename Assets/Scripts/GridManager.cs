@@ -12,11 +12,9 @@ public class GridManager : MonoBehaviour
     [SerializeField]
     Vector2 gridCenter;
     [SerializeField]
-    Sprite[] cellSprites;
-    [SerializeField]
     GameObject cellPrefab;
 
-    GenericGrid<Cell> grid;
+    GenericGrid<int> grid;
 
     public int Width => width;
     public int Height => height;
@@ -24,7 +22,7 @@ public class GridManager : MonoBehaviour
 
     private void Start()
     {
-        grid = new GenericGrid<Cell>(width, height, cellSize, gridCenter, GridPivot.Center, false, (int x, int y) => new Cell());
+        grid = new GenericGrid<int>(width, height, cellSize, gridCenter, GridPivot.Center, false, (int x, int y) => 0);
 
         Transform gridParent = (new GameObject("Grid")).transform;
 
@@ -35,8 +33,6 @@ public class GridManager : MonoBehaviour
                 Transform cellWorldObject = Instantiate(cellPrefab).transform;
                 cellWorldObject.position = grid.GridToWorldPosition(x, y);
                 cellWorldObject.SetParent(gridParent);
-
-                grid.GetCellObjectImmediate(x, y).SetSpriteRenderer(cellWorldObject.GetComponent<SpriteRenderer>());
             }
         }
     }
