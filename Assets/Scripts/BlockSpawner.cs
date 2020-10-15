@@ -9,9 +9,16 @@ public class BlockSpawner : MonoBehaviour
     [SerializeField]
     Sprite[] cellSprites;
     [SerializeField]
+    GridManager gridManager;
+    [SerializeField]
     int minCellValue, maxCellValue;
     [SerializeField]
     float spawnHeight, spawnableWidth;
+
+    private void Start()
+    {
+        SpawnNewWave(3);
+    }
 
     public void SpawnNewWave(int groupCount)
     {
@@ -21,11 +28,10 @@ public class BlockSpawner : MonoBehaviour
         {
             int n = Random.Range(0, blockGroups.Length);
 
-            Transform tr = Instantiate(blockGroups[n].GetRandomArrangement(), new Vector3((i + 1) * distance, spawnHeight), Quaternion.identity).transform;
+            Transform tr = Instantiate(blockGroups[n].GetRandomArrangement(), new Vector3((i + 1) * distance - spawnableWidth / 2, spawnHeight), Quaternion.identity).transform;
 
-            for (int z = 0; z < n + 1; z++)
+            foreach(Transform child in tr)
             {
-                Transform child = tr.GetChild(z);
                 int value = Random.Range(minCellValue, maxCellValue + 1);
 
                 child.name = "" + value;

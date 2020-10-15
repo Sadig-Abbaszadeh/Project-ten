@@ -8,7 +8,7 @@ public class GridManager : MonoBehaviour
     [SerializeField]
     int width, height;
     [SerializeField]
-    float cellSize;
+    float distanceBetweencells;
     [SerializeField]
     Vector2 gridCenter;
     [SerializeField]
@@ -18,7 +18,7 @@ public class GridManager : MonoBehaviour
 
     public int Width => width;
     public int Height => height;
-    public float CellSize => cellSize;
+    public float cellSize => cellPrefab.transform.localScale.x + distanceBetweencells;
 
     private void Start()
     {
@@ -31,7 +31,7 @@ public class GridManager : MonoBehaviour
             for (int y = 0; y < height; y++)
             {
                 Transform cellWorldObject = Instantiate(cellPrefab).transform;
-                cellWorldObject.position = grid.GridToWorldPosition(x, y);
+                cellWorldObject.localPosition = grid.GridToWorldPosition(x, y);
                 cellWorldObject.SetParent(gridParent);
             }
         }
