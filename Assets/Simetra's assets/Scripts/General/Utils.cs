@@ -183,11 +183,18 @@ namespace SimetraCustomLib
                 return GridToWorldPosition(gridXY.x, gridXY.y);
             }
 
-            // convert world pos to grid pos (can yield negative values!)
-            private void WorldToGridPosition(Vector3 worldPos, out int x, out int y)
+            /// <summary>
+            /// Convert world pos to grid pos (can yield negative values)
+            /// </summary>
+            public bool WorldToGridPosition(Vector3 worldPos, out int x, out int y)
             {
                 x = Mathf.FloorToInt((worldPos - origin).x / cellSize);
                 y = Mathf.FloorToInt((worldPos - origin).y / cellSize);
+
+                if (x < 0 || y < 0 || x >= width || y >= height)
+                    return false;
+
+                return true;
             }
 
             // set a value for a cell in grid given by its x and y coords
@@ -196,18 +203,23 @@ namespace SimetraCustomLib
                 if (x < 0 || y < 0 || x >= width || y >= height)
                     return;
 
-                gridArray[x, y] = value;
-
-                if (debugTextArray.GetLength(0) != 0) // if debug text array exists
-                    debugTextArray[x, y].text = value?.ToString();
+                _SetCellObject(x, y, value);
             }
             //
             public void SetCellObject(Vector3 worldPos, GridObjectType value)
             {
                 int x, y;
-                WorldToGridPosition(worldPos, out x, out y);
 
-                SetCellObject(x, y, value);
+                if (WorldToGridPosition(worldPos, out x, out y))
+                    _SetCellObject(x, y, value);
+            }
+
+            private void _SetCellObject(int x, int y, GridObjectType value)
+            {
+                gridArray[x, y] = value;
+
+                if (debugTextArray.GetLength(0) != 0) // if debug text array exists
+                    debugTextArray[x, y].text = value?.ToString();
             }
 
             /// <summary>
@@ -220,16 +232,18 @@ namespace SimetraCustomLib
 
                 return gridArray[x, y];
             }
-            
+
             /// <summary>
             /// Returns object in grid
             /// </summary>
             public GridObjectType GetCellObject(Vector3 worldPos)
             {
                 int x, y;
-                WorldToGridPosition(worldPos, out x, out y);
 
-                return GetCellObject(x, y);
+                if (WorldToGridPosition(worldPos, out x, out y))
+                    return gridArray[x, y];
+                else
+                    return default(GridObjectType);
             }
 
             /// <summary>

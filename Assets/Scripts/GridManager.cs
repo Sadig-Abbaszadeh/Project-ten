@@ -31,11 +31,12 @@ public class GridManager : MonoBehaviour
             for (int y = 0; y < height; y++)
             {
                 Transform cellWorldObject = Instantiate(cellPrefab).transform;
-                cellWorldObject.localPosition = grid.GridToWorldPosition(x, y);
+                cellWorldObject.localPosition = new Vector3(GetCellPosition(x, y).x, GetCellPosition(x, y).y, 5);
                 cellWorldObject.SetParent(gridParent);
             }
         }
     }
 
     public Vector3 GetCellPosition(int x, int y) => grid.GridToWorldPosition(x, y);
+    public bool WorldToGridPosition(Vector3 worldPos, out int x, out int y) => grid.WorldToGridPosition(worldPos, out x, out y);
 }

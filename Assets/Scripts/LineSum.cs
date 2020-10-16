@@ -13,6 +13,7 @@ public class LineSum : MonoBehaviour
     private void Start()
     {
         Transform lineValueParent = (new GameObject("Line Values")).transform;
+        lineValueParent.position = Vector3.forward * 5;
 
         for (int x = 0; x < gridManager.Width; x++)
             WorldObjects.CreateWorldText("0", lineValueParent, gridManager.GetCellPosition(x, gridManager.Height - 1) + Vector3.up * gridManager.cellSize, fontSize, Color.white, TMPro.TextAlignmentOptions.Center);

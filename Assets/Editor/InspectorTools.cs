@@ -5,33 +5,47 @@ using UnityEditor;
 [CustomEditor(typeof(PrefabEditor))]
 public class PrefabEditorInspector : Editor
 {
+    float cellSize;
+
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
 
-        if (GUILayout.Button("Update Prefabs"))
+        if (GUILayout.Button("Update prefab sizes"))
         {
             GameObject[] prefabs = (target as PrefabEditor).Prefabs;
-            float cellSize = (target as PrefabEditor).Grid_Manager.cellSize;
-            Debug.Log(cellSize);
+            cellSize = (target as PrefabEditor).Grid_Manager.cellSize;
 
-            foreach (GameObject prefab in prefabs)
+            UpdatePrefabs(UpdatePrefabSize, prefabs);
+
+            Debug.Log("Updated sizes of prefabs");
+        }
+    }
+
+    private void UpdatePrefabSize(GameObject prefab)
+    {
+        foreach (Transform child in prefab.transform)
+        {
+            child.localScale = Vector2.one * cellSize;
+            child.localPosition = new Vector3(cellSize / 2 * Mathf.Sign(child.position.x), cellSize / 2 * Mathf.Sign(child.position.y));
+        }
+
+        prefab.GetComponent<BoxCollider2D>().size = Vector2.one * cellSize * 2;
+    }
+
+    private void UpdatePrefabs(Action<GameObject> action, GameObject[] prefabs)
+    {
+        foreach (GameObject prefab in prefabs)
+        {
+            string prefabPath = AssetDatabase.GetAssetPath(prefab);
+
+            if (prefabPath == null || prefabPath.Equals(""))
+                continue;
+
+            using (EditPrefabAsset editPrefabAsset = new EditPrefabAsset(prefabPath))
             {
-                string prefabPath = AssetDatabase.GetAssetPath(prefab);
-
-                if (prefabPath == null || prefabPath.Equals(""))
-                    continue;
-
-                using (EditPrefabAsset editPrefabAsset = new EditPrefabAsset(prefabPath))
-                {
-                    // editing code goes here, eg: editPrefabAsset.prefabRoot....
-                    foreach(Transform child in editPrefabAsset.prefabRoot.transform)
-                    {
-                        child.localPosition = new Vector3(cellSize / 2 * Mathf.Sign(child.position.x), cellSize / 2 * Mathf.Sign(child.position.y));
-                    }
-
-                    editPrefabAsset.prefabRoot.GetComponent<BoxCollider2D>().size = Vector2.one * cellSize * 2;
-                }
+                // editing code goes here, eg: editPrefabAsset.prefabRoot....
+                action(editPrefabAsset.prefabRoot);
             }
         }
     }
