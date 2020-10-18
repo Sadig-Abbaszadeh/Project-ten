@@ -5,8 +5,6 @@ using UnityEngine;
 public class BlockGroupController : MonoBehaviour
 {
     Camera cam;
-    
-    GridManager gridManager;
 
     Vector3 initialPosition;
 
@@ -17,7 +15,6 @@ public class BlockGroupController : MonoBehaviour
     private void Start()
     {
         cam = Camera.main;
-        gridManager = FindObjectOfType<GridManager>();
         
         initialPosition = transform.position;
     }
@@ -42,19 +39,7 @@ public class BlockGroupController : MonoBehaviour
 #endif
             else
             {
-                int snapCount = 0;
-
-                foreach(Transform child in transform)
-                {
-                    int x, y;
-
-                    if (gridManager.WorldToGridPosition(child.position, out x, out y))
-                        snapCount++;
-                }
-
-                if (snapCount == transform.childCount)
-                    SettleGroup();
-
+                GameMaster.Instance.TrySettleGroup(transform);
                 followPointer = false;
             }
         }
@@ -65,19 +50,5 @@ public class BlockGroupController : MonoBehaviour
     private void OnMouseDown()
     {
         followPointer = true;
-    }
-
-    private void SettleGroup()
-    {
-        foreach(Transform child in transform)
-        {
-            int x, y;
-
-            gridManager.WorldToGridPosition(child.position, out x, out y);
-            child.position = gridManager.GetCellPosition(x, y);
-        }
-
-        transform.DetachChildren();
-        Destroy(gameObject);
     }
 }

@@ -12,9 +12,11 @@ public class GridManager : MonoBehaviour
     [SerializeField]
     Vector2 gridCenter;
     [SerializeField]
+    GridPivot gridPivot;
+    [SerializeField]
     GameObject cellPrefab;
 
-    GenericGrid<int> grid;
+    GenericGrid<Cell> grid;
 
     public int Width => width;
     public int Height => height;
@@ -22,7 +24,12 @@ public class GridManager : MonoBehaviour
 
     private void Start()
     {
-        grid = new GenericGrid<int>(width, height, cellSize, gridCenter, GridPivot.Center, false, (int x, int y) => 0);
+        SpawnGrid();
+    }
+
+    private void SpawnGrid()
+    {
+        grid = new GenericGrid<Cell>(width, height, cellSize, gridCenter, gridPivot, false, (int x, int y) => new Cell());
 
         Transform gridParent = (new GameObject("Grid")).transform;
 
@@ -39,4 +46,18 @@ public class GridManager : MonoBehaviour
 
     public Vector3 GetCellPosition(int x, int y) => grid.GridToWorldPosition(x, y);
     public bool WorldToGridPosition(Vector3 worldPos, out int x, out int y) => grid.WorldToGridPosition(worldPos, out x, out y);
+
+    public void UpdateCell(GameObject obj, int x, int y)
+    {
+        if (obj == null)
+            grid.GetCellObjectImmediate(x, y).ClearCell();
+        else
+            grid.GetCellObjectImmediate(x, y).FillTheCell(obj);
+    }
+
+    public int GetCellValue(int x, int y)
+    {
+        Cell cell = grid.GetCellObject(x, y);
+        return cell == null ? -1 : cell.CellValue;
+    }
 }

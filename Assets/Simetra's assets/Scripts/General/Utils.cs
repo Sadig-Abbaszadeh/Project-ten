@@ -101,8 +101,6 @@ namespace SimetraCustomLib
             Vector3 origin; // origin of grid (bottom left corner)
             float cellSize; // size of each cell
 
-            Vector3 def = Vector3.zero;
-
             GridObjectType[,] gridArray;
             TextMeshPro[,] debugTextArray;
 
@@ -121,7 +119,7 @@ namespace SimetraCustomLib
                 switch (pivot)
                 {
                     case GridPivot.Center:
-                        origin = spawnLocation - new Vector3(width - 1, height - 1) * cellSize / 2f;
+                        origin = spawnLocation - new Vector3(width, height) * cellSize / 2f;
                         break;
                     case GridPivot.BottomLeft:
                         origin = spawnLocation;
@@ -172,7 +170,7 @@ namespace SimetraCustomLib
             /// </summary>
             public Vector3 GridToWorldPosition(int x, int y)
             {
-                return new Vector3(x, y) * cellSize + origin;
+                return new Vector3(x + .5f, y + .5f) * cellSize + origin;
             }
 
             /// <summary>
