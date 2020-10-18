@@ -9,16 +9,13 @@ public class LineSum : MonoBehaviour
     [SerializeField]
     GridManager gridManager;
     [SerializeField]
+    int maxValue;
+    [SerializeField]
     float fontSize;
 
     TextMeshPro[] columnTexts, rowTexts;
 
-    private void Start()
-    {
-        Spawn();
-    }
-
-    private void Spawn()
+    public void Spawn()
     {
         Transform lineValueParent = (new GameObject("Line Values")).transform;
         lineValueParent.position = Vector3.forward * 5;
@@ -34,5 +31,12 @@ public class LineSum : MonoBehaviour
             rowTexts[y] = WorldObjects.CreateWorldText("0", lineValueParent, gridManager.GetCellPosition(0, y) - Vector3.right * gridManager.cellSize, fontSize, Color.white, TextAlignmentOptions.Center);
     }
 
-    //public void UpdateText(int cellX, int cellY, int valueChange)
+    public void UpdateColumnAndRowText(bool column, int index, int value)
+    {
+        TextMeshPro text = column ? columnTexts[index] : rowTexts[index];
+
+        text.text = ValueToString(value);
+    }
+
+    private string ValueToString(int value) => value <= maxValue ? "" + value : "+";
 }

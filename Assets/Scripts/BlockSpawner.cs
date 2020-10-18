@@ -15,11 +15,6 @@ public class BlockSpawner : MonoBehaviour
     [SerializeField]
     float spawnHeight, spawnableWidth;
 
-    private void Start()
-    {
-        SpawnNewWave(3);
-    }
-
     public void SpawnNewWave(int groupCount)
     {
         float distance = spawnableWidth / (groupCount + 1);

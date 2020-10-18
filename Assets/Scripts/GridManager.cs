@@ -22,12 +22,7 @@ public class GridManager : MonoBehaviour
     public int Height => height;
     public float cellSize => cellPrefab.transform.localScale.x + distanceBetweencells;
 
-    private void Start()
-    {
-        SpawnGrid();
-    }
-
-    private void SpawnGrid()
+    public void SpawnGrid()
     {
         grid = new GenericGrid<Cell>(width, height, cellSize, gridCenter, gridPivot, false, (int x, int y) => new Cell());
 
@@ -47,12 +42,12 @@ public class GridManager : MonoBehaviour
     public Vector3 GetCellPosition(int x, int y) => grid.GridToWorldPosition(x, y);
     public bool WorldToGridPosition(Vector3 worldPos, out int x, out int y) => grid.WorldToGridPosition(worldPos, out x, out y);
 
-    public void UpdateCell(GameObject obj, int x, int y)
+    public void UpdateCell(int x, int y, GameObject cellObject, int cellValue)
     {
-        if (obj == null)
+        if (cellObject == null)
             grid.GetCellObjectImmediate(x, y).ClearCell();
         else
-            grid.GetCellObjectImmediate(x, y).FillTheCell(obj);
+            grid.GetCellObjectImmediate(x, y).FillTheCell(cellObject, cellValue);
     }
 
     public int GetCellValue(int x, int y)

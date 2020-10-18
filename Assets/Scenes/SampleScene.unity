@@ -315,7 +315,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gridManager: {fileID: 1451464594}
   blockSpawner: {fileID: 1451464596}
-  lineSum: {fileID: 0}
+  lineSum: {fileID: 1451464593}
+  blockSpawnAmount: 3
 --- !u!1 &1451464592
 GameObject:
   m_ObjectHideFlags: 0
@@ -348,6 +349,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridManager: {fileID: 1451464594}
+  maxValue: 9
   fontSize: 5.5
 --- !u!114 &1451464594
 MonoBehaviour:

@@ -11,10 +11,10 @@ public class Cell
     public int CellValue => cellValue;
     public GameObject CellObject => cellObject;
 
-    public void FillTheCell(GameObject gameObject)
+    public void FillTheCell(GameObject cellObject, int cellValue)
     {
-        cellObject = gameObject;
-        cellValue = Convert.ToInt32(gameObject.name);
+        this.cellObject = cellObject;
+        this.cellValue = cellValue;
     }
 
     public void ClearCell()
