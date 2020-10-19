@@ -281,7 +281,7 @@ GameObject:
   - component: {fileID: 1124810745}
   - component: {fileID: 1124810746}
   m_Layer: 0
-  m_Name: GameManager
+  m_Name: GameMaster
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -316,7 +316,9 @@ MonoBehaviour:
   gridManager: {fileID: 1451464594}
   blockSpawner: {fileID: 1451464596}
   lineSum: {fileID: 1451464593}
+  gridOps: {fileID: 1451464597}
   blockSpawnAmount: 3
+  maxCellValue: 9
 --- !u!1 &1451464592
 GameObject:
   m_ObjectHideFlags: 0
@@ -329,6 +331,7 @@ GameObject:
   - component: {fileID: 1451464594}
   - component: {fileID: 1451464593}
   - component: {fileID: 1451464596}
+  - component: {fileID: 1451464597}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -348,8 +351,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11c93b7c2b18cdc408ffa13c1e010e59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameMaster: {fileID: 1124810746}
   gridManager: {fileID: 1451464594}
-  maxValue: 9
   fontSize: 5.5
 --- !u!114 &1451464594
 MonoBehaviour:
@@ -423,6 +426,20 @@ MonoBehaviour:
   maxCellValue: 6
   spawnHeight: -2.5
   spawnableWidth: 6
+--- !u!114 &1451464597
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1451464592}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 201cfab791914ef41b25438034aef0a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameMaster: {fileID: 1124810746}
+  gridManager: {fileID: 1451464594}
 --- !u!1 &1956245885
 GameObject:
   m_ObjectHideFlags: 0

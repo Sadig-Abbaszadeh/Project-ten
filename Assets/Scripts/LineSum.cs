@@ -1,15 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
 using SimetraCustomLib.GeneralUtils;
 
 public class LineSum : MonoBehaviour
 {
     [SerializeField]
-    GridManager gridManager;
+    GameMaster gameMaster;
     [SerializeField]
-    int maxValue;
+    GridManager gridManager;
     [SerializeField]
     float fontSize;
 
@@ -38,5 +36,5 @@ public class LineSum : MonoBehaviour
         text.text = ValueToString(value);
     }
 
-    private string ValueToString(int value) => value <= maxValue ? "" + value : "+";
+    private string ValueToString(int value) => value <= gameMaster.MaxCellValue ? "" + value : "+";
 }

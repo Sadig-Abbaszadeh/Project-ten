@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class BlockGroupController : MonoBehaviour
 {
+    GridOps gridOps;
+
     Camera cam;
 
     Vector3 initialPosition;
@@ -14,6 +16,8 @@ public class BlockGroupController : MonoBehaviour
 
     private void Start()
     {
+        gridOps = FindObjectOfType<GridOps>();    
+
         cam = Camera.main;
         
         initialPosition = transform.position;
@@ -39,7 +43,7 @@ public class BlockGroupController : MonoBehaviour
 #endif
             else
             {
-                GameMaster.Instance.TrySettleGroup(transform);
+                gridOps.TrySettleGroup(transform);
                 followPointer = false;
             }
         }

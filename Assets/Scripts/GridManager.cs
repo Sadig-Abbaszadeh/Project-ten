@@ -20,7 +20,12 @@ public class GridManager : MonoBehaviour
 
     public int Width => width;
     public int Height => height;
+    public Vector3 GetCellPosition(int x, int y) => grid.GridToWorldPosition(x, y);
     public float cellSize => cellPrefab.transform.localScale.x + distanceBetweencells;
+    public bool WorldToGridPosition(Vector3 worldPos, out int x, out int y) => grid.WorldToGridPosition(worldPos, out x, out y);
+    public void UpdateCell(int x, int y, GameObject cellObject, int cellValue) => grid.GetCellObjectImmediate(x, y).FillTheCell(cellObject, cellValue);
+
+    public void ClearCell(int x, int y) => grid.GetCellObjectImmediate(x, y).ClearCell();
 
     public void SpawnGrid()
     {
@@ -37,17 +42,6 @@ public class GridManager : MonoBehaviour
                 cellWorldObject.SetParent(gridParent);
             }
         }
-    }
-
-    public Vector3 GetCellPosition(int x, int y) => grid.GridToWorldPosition(x, y);
-    public bool WorldToGridPosition(Vector3 worldPos, out int x, out int y) => grid.WorldToGridPosition(worldPos, out x, out y);
-
-    public void UpdateCell(int x, int y, GameObject cellObject, int cellValue)
-    {
-        if (cellObject == null)
-            grid.GetCellObjectImmediate(x, y).ClearCell();
-        else
-            grid.GetCellObjectImmediate(x, y).FillTheCell(cellObject, cellValue);
     }
 
     public int GetCellValue(int x, int y)

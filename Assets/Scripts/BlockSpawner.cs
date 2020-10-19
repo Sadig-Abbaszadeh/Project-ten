@@ -15,8 +15,14 @@ public class BlockSpawner : MonoBehaviour
     [SerializeField]
     float spawnHeight, spawnableWidth;
 
+    Transform[] currentWave;
+
+    public Transform[] CurrentWave => currentWave;
+
     public void SpawnNewWave(int groupCount)
     {
+        Transform[] newWave = new Transform[groupCount];    
+
         float distance = spawnableWidth / (groupCount + 1);
 
         for (int i = 0; i < groupCount; i++)
@@ -24,6 +30,7 @@ public class BlockSpawner : MonoBehaviour
             int n = Random.Range(0, blockGroups.Length);
 
             Transform tr = Instantiate(blockGroups[n].GetRandomArrangement(), new Vector3((i + 1) * distance - spawnableWidth / 2, spawnHeight), Quaternion.identity).transform;
+            newWave[i] = tr;
 
             foreach(Transform child in tr)
             {
@@ -33,5 +40,7 @@ public class BlockSpawner : MonoBehaviour
                 child.GetComponent<SpriteRenderer>().sprite = cellSprites[value - 1];
             }
         }
+
+        currentWave = newWave;
     }
 }

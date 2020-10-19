@@ -19,6 +19,7 @@ public class Cell
 
     public void ClearCell()
     {
+        UnityEngine.Object.Destroy(cellObject);
         cellObject = null;
         cellValue = 0;
     }

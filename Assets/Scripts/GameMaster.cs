@@ -1,111 +1,94 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System;
+﻿using System.Linq;
 using UnityEngine;
 
 public class GameMaster : MonoBehaviour
 {
-    public static GameMaster Instance { get; private set; }
-
     [SerializeField]
     GridManager gridManager;
     [SerializeField]
     BlockSpawner blockSpawner;
     [SerializeField]
     LineSum lineSum;
+    [SerializeField]
+    GridOps gridOps;
 
     [SerializeField]
-    int blockSpawnAmount;
+    int blockSpawnAmount, maxCellValue;
 
     int[] columnSum, rowSum;
 
     int settledGroups = 0;
 
-    private void Awake()
-    {
-        if (Instance == null)
-            Instance = this;
-        else
-            Destroy(gameObject);
-    }
+    public int MaxCellValue => maxCellValue;
 
     private void Start()
     {
         gridManager.SpawnGrid();
         lineSum.Spawn();
-        blockSpawner.SpawnNewWave(blockSpawnAmount);
+        SpawnNewWave();
 
         columnSum = new int[gridManager.Width];
         rowSum = new int[gridManager.Height];
     }
 
-    public void TrySettleGroup(Transform groupParent)
+    public void UpdateValues(CoordPair coordPair, int value)
     {
-        int snapCount = 0, childCount = groupParent.childCount;
-        CoordPair[] coordPairs = new CoordPair[groupParent.childCount];
+        if (value == 0)
+            return;
 
-        for (int i = 0; i < childCount; i++)
+        if ((columnSum[coordPair.x] += value) == maxCellValue + 1)
         {
-            int x, y;
-
-            if (gridManager.WorldToGridPosition(groupParent.GetChild(i).position, out x, out y) && gridManager.GetCellValue(x, y) == 0)
+            for (int y = 0; y < gridManager.Height; y++)
             {
-                coordPairs[i] = new CoordPair(x, y);
-                snapCount++;
+                int cellValue = gridManager.GetCellValue(coordPair.x, y);
+
+                gridManager.ClearCell(coordPair.x, y);
+
+                UpdateValues(new CoordPair(coordPair.x, y), -cellValue);
             }
         }
 
-        if (snapCount == childCount)
-            SettleGroup(groupParent, coordPairs);
-    }
-
-    private void SettleGroup(Transform groupParent, CoordPair[] coordPairs)
-    {
-        Transform[] blocks = DetachReturnChildren(groupParent);
-
-        for(int i = 0; i < blocks.Length; i++)
+        if ((rowSum[coordPair.y] += value) == maxCellValue + 1)
         {
-            // set snap coordinates
-            blocks[i].position = gridManager.GetCellPosition(coordPairs[i].x, coordPairs[i].y) + Vector3.forward * 4;
+            for (int x = 0; x < gridManager.Width; x++)
+            {
+                int cellValue = gridManager.GetCellValue(x, coordPair.y);
 
-            // upgrade cell
-            int value = Convert.ToInt32(blocks[i].name);
-            gridManager.UpdateCell(coordPairs[i].x, coordPairs[i].y, blocks[i].gameObject, value);
+                gridManager.ClearCell(x, coordPair.y);
 
-            // update line sum
-            columnSum[coordPairs[i].x] += value;
-            rowSum[coordPairs[i].y] += value;
-
-            // update text
-            lineSum.UpdateColumnAndRowText(true, coordPairs[i].x, columnSum[coordPairs[i].x]);
-            lineSum.UpdateColumnAndRowText(false, coordPairs[i].y, rowSum[coordPairs[i].y]);
-
-            Debug.Log(value + ": " + coordPairs[i].x + "-" + coordPairs[i].y);
+                UpdateValues(new CoordPair(x, coordPair.y), -cellValue);
+            }
         }
 
-        Destroy(groupParent.gameObject);
+        lineSum.UpdateColumnAndRowText(true, coordPair.x, columnSum[coordPair.x]);
+        lineSum.UpdateColumnAndRowText(false, coordPair.y, rowSum[coordPair.y]);
+    }
 
+    public void SettleComplete()
+    {
         settledGroups++;
-
         if(settledGroups == blockSpawnAmount)
         {
             settledGroups = 0;
-            blockSpawner.SpawnNewWave(blockSpawnAmount);
+            SpawnNewWave();
         }
+
+        CheckGameOver();
     }
 
-    private Transform[] DetachReturnChildren(Transform parent)
+    private void CheckGameOver()
     {
-        int childCount = parent.childCount;
-        Transform[] children = new Transform[childCount];
+        if (!blockSpawner.CurrentWave.All(gridOps.CanBePlaced))
+            GameOver();
+    }
 
-        for(int i = 0; i < childCount; i++)
-        {
-            Transform child = parent.GetChild(0);
-            children[i] = child;
-            child.SetParent(null);
-        }
+    private void GameOver()
+    {
+        Debug.Log("Game over");
+    }
 
-        return children;
+    private void SpawnNewWave()
+    {
+        blockSpawner.SpawnNewWave(blockSpawnAmount);
     }
 }
