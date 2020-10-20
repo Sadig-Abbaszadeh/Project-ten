@@ -33,7 +33,7 @@ public class GridOps : MonoBehaviour
         int n;
 
         if (groupParent == null || (n = groupParent.childCount) == 0)
-            return true;
+            return false;
 
         CoordPair[] coordinatePairs = new CoordPair[n];
         Vector3 pos0 = groupParent.GetChild(0).localPosition;
@@ -82,8 +82,11 @@ public class GridOps : MonoBehaviour
             gridManager.UpdateCell(coordPairs[i].x, coordPairs[i].y, blocks[i].gameObject, value);
 
             // update line sum
-            gameMaster.UpdateValues(coordPairs[i], value);
+            gameMaster.UpdateSums(coordPairs[i], value);
         }
+
+        for (int i = 0; i < blocks.Length; i++)
+            gameMaster.CheckLineClear(coordPairs[i]);
 
         Destroy(groupParent.gameObject);
         gameMaster.SettleComplete();

@@ -31,24 +31,32 @@ public class GameMaster : MonoBehaviour
         rowSum = new int[gridManager.Height];
     }
 
-    public void UpdateValues(CoordPair coordPair, int value)
+    public void UpdateSums(CoordPair coordPair, int value)
     {
-        if (value == 0)
-            return;
+        columnSum[coordPair.x] += value;
+        rowSum[coordPair.y] += value;
+    }
 
-        if ((columnSum[coordPair.x] += value) == maxCellValue + 1)
+    public void CheckLineClear(CoordPair coordPair, int value = 0)
+    {
+        int column = columnSum[coordPair.x] += value;
+        int row = rowSum[coordPair.y] += value;
+
+        if (column == maxCellValue + 1)
         {
             for (int y = 0; y < gridManager.Height; y++)
             {
+                //value = 0;
                 int cellValue = gridManager.GetCellValue(coordPair.x, y);
 
                 gridManager.ClearCell(coordPair.x, y);
 
-                UpdateValues(new CoordPair(coordPair.x, y), -cellValue);
+                if (cellValue != 0)
+                    CheckLineClear(new CoordPair(coordPair.x, y), -cellValue);
             }
         }
 
-        if ((rowSum[coordPair.y] += value) == maxCellValue + 1)
+        if (row == maxCellValue + 1)
         {
             for (int x = 0; x < gridManager.Width; x++)
             {
@@ -56,7 +64,8 @@ public class GameMaster : MonoBehaviour
 
                 gridManager.ClearCell(x, coordPair.y);
 
-                UpdateValues(new CoordPair(x, coordPair.y), -cellValue);
+                if (cellValue != 0)
+                    CheckLineClear(new CoordPair(x, coordPair.y), -cellValue);
             }
         }
 
@@ -67,7 +76,7 @@ public class GameMaster : MonoBehaviour
     public void SettleComplete()
     {
         settledGroups++;
-        if(settledGroups == blockSpawnAmount)
+        if (settledGroups == blockSpawnAmount)
         {
             settledGroups = 0;
             SpawnNewWave();
@@ -78,7 +87,7 @@ public class GameMaster : MonoBehaviour
 
     private void CheckGameOver()
     {
-        if (!blockSpawner.CurrentWave.All(gridOps.CanBePlaced))
+        if (!blockSpawner.CurrentWave.Any(gridOps.CanBePlaced))
             GameOver();
     }
 
