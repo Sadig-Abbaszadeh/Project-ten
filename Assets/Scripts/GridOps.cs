@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections;
 using UnityEngine;
 
 public class GridOps : MonoBehaviour
@@ -7,6 +7,8 @@ public class GridOps : MonoBehaviour
     GameMaster gameMaster;
     [SerializeField]
     GridManager gridManager;
+
+    IEnumerator CheckLineClear;
 
     public void TrySettleGroup(Transform groupParent)
     {
@@ -25,7 +27,7 @@ public class GridOps : MonoBehaviour
         }
 
         if (snapCount == childCount)
-            SettleGroup(groupParent, coordPairs);
+            StartCoroutine(SettleGroup(groupParent, coordPairs));
     }
 
     public bool CanBePlaced(Transform groupParent)
@@ -68,9 +70,12 @@ public class GridOps : MonoBehaviour
         return false;
     }
 
-    private void SettleGroup(Transform groupParent, CoordPair[] coordPairs)
+    private IEnumerator SettleGroup(Transform groupParent, CoordPair[] coordPairs)
     {
+        CheckLineClear = gameMaster.CheckLineClear();
+
         Transform[] blocks = DetachReturnChildren(groupParent);
+        Destroy(groupParent.gameObject);
 
         for (int i = 0; i < blocks.Length; i++)
         {
@@ -78,17 +83,16 @@ public class GridOps : MonoBehaviour
             blocks[i].position = gridManager.GetCellPosition(coordPairs[i].x, coordPairs[i].y) + Vector3.forward * 4;
 
             // upgrade cell
-            int value = Convert.ToInt32(blocks[i].name);
+            int value = int.Parse(blocks[i].name);
             gridManager.UpdateCell(coordPairs[i].x, coordPairs[i].y, blocks[i].gameObject, value);
 
             // update line sum
             gameMaster.UpdateSums(coordPairs[i], value);
         }
 
-        for (int i = 0; i < blocks.Length; i++)
-            gameMaster.CheckLineClear(coordPairs[i]);
+        while (CheckLineClear.MoveNext())
+            yield return null;
 
-        Destroy(groupParent.gameObject);
         gameMaster.SettleComplete();
     }
 
