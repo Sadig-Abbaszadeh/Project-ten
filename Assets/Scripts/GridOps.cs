@@ -8,8 +8,6 @@ public class GridOps : MonoBehaviour
     [SerializeField]
     GridManager gridManager;
 
-    IEnumerator CheckLineClear;
-
     public void TrySettleGroup(Transform groupParent)
     {
         int snapCount = 0, childCount = groupParent.childCount;
@@ -72,7 +70,7 @@ public class GridOps : MonoBehaviour
 
     private IEnumerator SettleGroup(Transform groupParent, CoordPair[] coordPairs)
     {
-        CheckLineClear = gameMaster.CheckLineClear();
+        IEnumerator CheckLineClear = gameMaster.CheckLineClear();
 
         Transform[] blocks = DetachReturnChildren(groupParent);
         Destroy(groupParent.gameObject);

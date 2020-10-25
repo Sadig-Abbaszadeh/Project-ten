@@ -14,6 +14,8 @@ public class GameMaster : MonoBehaviour
     [SerializeField]
     GridOps gridOps;
     [SerializeField]
+    Odds odds;
+    [SerializeField]
     VisualEffectsController effectsController;
 
     [SerializeField]
@@ -82,12 +84,15 @@ public class GameMaster : MonoBehaviour
 
         if (lines != 0)
         {
-            IEnumerator Animation = effectsController.LineClearAnim(rows, columns);
+            IEnumerator next = effectsController.LineClearAnim(rows, columns);
 
-            while (Animation.MoveNext())
+            while (next.MoveNext())
                 yield return null;
 
-            StartCoroutine(CheckLineClear());
+            next = CheckLineClear();
+
+            while (next.MoveNext())
+                yield return null;
         }
 
         yield break;
@@ -113,6 +118,8 @@ public class GameMaster : MonoBehaviour
     {
         score += (2 * scorePerLine + (linesCleared - 1) * comboScoreIncrease) / 2 * linesCleared;
         linesCleared = 0;
+
+        odds.TryChangeOdds(score);
 
         settledGroups++;
         if (settledGroups == blockSpawnAmount)

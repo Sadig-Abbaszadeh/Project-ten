@@ -11,13 +11,15 @@ public class BlockSpawner : MonoBehaviour
     [SerializeField]
     GridManager gridManager;
     [SerializeField]
-    int minCellValue, maxCellValue;
+    Odds odds;
     [SerializeField]
     float spawnHeight, spawnableWidth;
 
     Transform[] currentWave;
 
     public Transform[] CurrentWave => currentWave;
+    public int MaxBlockCount => blockGroups.Length;
+    public int MaxValueOnBlock => cellSprites.Length;
 
     public void SpawnNewWave(int groupCount)
     {
@@ -27,14 +29,14 @@ public class BlockSpawner : MonoBehaviour
 
         for (int i = 0; i < groupCount; i++)
         {
-            int n = Random.Range(0, blockGroups.Length);
+            int n = odds.GetRandomBlock();
 
             Transform tr = Instantiate(blockGroups[n].GetRandomArrangement(), new Vector3((i + 1) * distance - spawnableWidth / 2, spawnHeight), Quaternion.identity).transform;
             newWave[i] = tr;
 
             foreach(Transform child in tr)
             {
-                int value = Random.Range(minCellValue, maxCellValue + 1);
+                int value = odds.GetRandomValue();
 
                 child.name = "" + value;
                 child.GetComponent<SpriteRenderer>().sprite = cellSprites[value - 1];
